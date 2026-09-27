@@ -17,7 +17,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Git {
     public static void main(String[] args) {
-        
+
     }
 
     public static void init() {
@@ -132,10 +132,12 @@ public class Git {
             ByteArrayOutputStream byteOS = new ByteArrayOutputStream(file.length);
             GZIPOutputStream gzOS = new GZIPOutputStream(byteOS);
         ) {
-           gzOS.write(file);
+            gzOS.write(file);
+            gzOS.close();
+            byteOS.close();
 
-           byte[] output = byteOS.toByteArray();
-           return output;
+            byte[] output = byteOS.toByteArray();
+            return output;
         } catch (Exception e) {
         }
         return null;
@@ -168,6 +170,8 @@ public class Git {
             while ((len = gzIS.read(buffer)) > 0) {
                 out.write(buffer, 0, len);
             }
+            gzIS.close();
+            out.close();
             return out.toByteArray();
         } catch (Exception e) {System.err.println(e);}
         return null;
