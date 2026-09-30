@@ -42,6 +42,10 @@ public class Git {
         }
     }
 
+    public static void treeStage() {
+        
+    }
+
     public static String hashFile(String filePath) {
         // returns hash of given file contents from path as a string
         Path path = Paths.get(filePath);
