@@ -11,7 +11,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -29,17 +32,54 @@ public class Git {
             if (Files.exists(objPath) && Files.exists(indexPath) && Files.exists(headPath)) {
                 System.out.println("Git Repository Already Exists");
                 return;
-            } if (!Files.exists(objPath)) {
+            }
+            if (!Files.exists(objPath)) {
                 Files.createDirectories(objPath);
-            } if (!Files.exists(indexPath)) {
+            }
+            if (!Files.exists(indexPath)) {
                 Files.createFile(indexPath);
-            } if (!Files.exists(headPath)) {
+            }
+            if (!Files.exists(headPath)) {
                 Files.createFile(headPath);
             }
             System.out.println("Git Repository Created");
         } catch (Exception e) {
             System.err.println(e);
         }
+    }
+
+    public static void treeStage() throws IOException {
+        var entries = Files.readAllLines(Path.of("./git/index"));
+
+        String deepest;
+        while ((deepest = getDeepestDir(entries)) != null) {
+
+        }
+
+
+
+    }
+
+    public static String getDeepestDir(List<String> entries) {
+        ArrayList<String> files_inside_deepest_dir = new ArrayList<>();
+        String deepestDir = null;
+        var maxNumSlashes = 0;
+
+        for (var line : entries) {
+            var split = line.split(" ");
+            if (split.length > 1) {
+                if (split[1].equals(deepestDir)) {
+                    
+                }
+                String[] path = split[1].split("/");
+                if (path.length > maxNumSlashes) {
+                    maxNumSlashes = path.length;
+                    deepestDir = String.join("/", Arrays.copyOfRange(path, 0, path.length - 1));
+                }
+            }
+        }
+
+        return deepestDir;
     }
 
     public static String hashFile(String filePath) {
@@ -59,7 +99,7 @@ public class Git {
 
     public static void saveBlob(String filePath) {
         // saves a given file at path to blob in ./git/objects
-        // implements gzip encoding through compress() 
+        // implements gzip encoding through compress()
         // with decompress() useful for future implementation
         Path path = Paths.get(filePath);
         if (!Files.exists(Paths.get("./git/objects"))) {
@@ -76,7 +116,9 @@ public class Git {
         Path save = Paths.get("./git/objects/" + hashFile(filePath));
         try {
             Files.write(save, compress(file));
-        } catch (IOException e) {System.err.println(e);}
+        } catch (IOException e) {
+            System.err.println(e);
+        }
     }
 
     public static void updateIndex(String filePath) {
@@ -94,21 +136,28 @@ public class Git {
             for (String[] line : index) {
                 String readLine = br.readLine();
                 line[0] = readLine.substring(0, readLine.indexOf(' '));
-                line[1] = readLine.substring(readLine.indexOf(' ')+1);
+                line[1] = readLine.substring(readLine.indexOf(' ') + 1);
             }
-        } catch (Exception e) {System.err.println(e);}
+        } catch (Exception e) {
+            System.err.println(e);
+        }
         try (BufferedWriter bw = new BufferedWriter(Files.newBufferedWriter(indexPath))) {
             StringBuilder print = new StringBuilder();
             for (int i = 0; i < index.length; i++) {
                 if (index[i][1].equals(filePath) && !index[i][0].equals(hash)) {
                     index[i][0] = hash;
                     add = false;
-                } else if (index[i][1].equals(filePath) && index[i][0].equals(hash)) add = false;
+                } else if (index[i][1].equals(filePath) && index[i][0].equals(hash))
+                    add = false;
                 print.append("\n" + index[i][0] + " " + index[i][1]);
             }
-            if (add) print.append("\n" + hash + " " + home.getParent().getFileName() + filePath.substring(1));
+            if (add)
+                print.append(
+                        "\n" + hash + " " + home.getParent().getFileName() + filePath.substring(1));
             bw.write(print.substring(1));
-        } catch (Exception e) {System.err.println(e);}
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     public static String compressFile(String filePath) {
@@ -128,10 +177,8 @@ public class Git {
         // input byte array from file to compress
         // output compressed byte array
         // compression uses gzip
-        try (
-            ByteArrayOutputStream byteOS = new ByteArrayOutputStream(file.length);
-            GZIPOutputStream gzOS = new GZIPOutputStream(byteOS);
-        ) {
+        try (ByteArrayOutputStream byteOS = new ByteArrayOutputStream(file.length);
+                GZIPOutputStream gzOS = new GZIPOutputStream(byteOS);) {
             gzOS.write(file);
             gzOS.close();
             byteOS.close();
@@ -159,10 +206,8 @@ public class Git {
     private static byte[] decompress(byte[] file) {
         // input compressed byte array from file to decompress
         // output decompressed byte array
-        try (
-            ByteArrayInputStream byteIS = new ByteArrayInputStream(file);
-            GZIPInputStream gzIS = new GZIPInputStream(byteIS);
-        ) {
+        try (ByteArrayInputStream byteIS = new ByteArrayInputStream(file);
+                GZIPInputStream gzIS = new GZIPInputStream(byteIS);) {
             byte[] buffer = new byte[1024];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -173,7 +218,9 @@ public class Git {
             gzIS.close();
             out.close();
             return out.toByteArray();
-        } catch (Exception e) {System.err.println(e);}
+        } catch (Exception e) {
+            System.err.println(e);
+        }
         return null;
     }
 }
