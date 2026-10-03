@@ -19,8 +19,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class Git {
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+        var entries = Files.readAllLines(Path.of("./git/index"));
+        var tree = new StageTree(entries);
     }
 
     public static void init() {
@@ -46,40 +47,6 @@ public class Git {
         } catch (Exception e) {
             System.err.println(e);
         }
-    }
-
-    public static void treeStage() throws IOException {
-        var entries = Files.readAllLines(Path.of("./git/index"));
-
-        String deepest;
-        while ((deepest = getDeepestDir(entries)) != null) {
-
-        }
-
-
-
-    }
-
-    public static String getDeepestDir(List<String> entries) {
-        ArrayList<String> files_inside_deepest_dir = new ArrayList<>();
-        String deepestDir = null;
-        var maxNumSlashes = 0;
-
-        for (var line : entries) {
-            var split = line.split(" ");
-            if (split.length > 1) {
-                if (split[1].equals(deepestDir)) {
-                    
-                }
-                String[] path = split[1].split("/");
-                if (path.length > maxNumSlashes) {
-                    maxNumSlashes = path.length;
-                    deepestDir = String.join("/", Arrays.copyOfRange(path, 0, path.length - 1));
-                }
-            }
-        }
-
-        return deepestDir;
     }
 
     public static String hashFile(String filePath) {
