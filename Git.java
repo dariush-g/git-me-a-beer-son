@@ -20,8 +20,12 @@ import java.util.zip.GZIPOutputStream;
 
 public class Git {
     public static void main(String[] args) throws IOException {
-        var entries = Files.readAllLines(Path.of("./git/index"));
-        var tree = new StageTree(entries);
+        saveBlob("Git.java");
+        updateIndex("Git.java");
+
+        // var entries = Files.readAllLines(Path.of("./git/index"));
+        // var tree = new StageTree(entries);
+        // tree.build_entry(new StageTree.StageFolder(Path.of(".")));
     }
 
     public static void init() {
@@ -49,21 +53,6 @@ public class Git {
         }
     }
 
-    public static String hashFile(String filePath) {
-        // returns hash of given file contents from path as a string
-        Path path = Paths.get(filePath);
-        String hex = new String();
-        try {
-            byte[] file = Files.readAllBytes(path);
-            MessageDigest dig = MessageDigest.getInstance("SHA-1");
-            byte[] bytes = dig.digest(file);
-            hex = HexFormat.of().formatHex(bytes);
-        } catch (Exception e) {
-            System.out.println("Error: No file was found at the given path");
-        }
-        return hex;
-    }
-
     public static void saveBlob(String filePath) {
         // saves a given file at path to blob in ./git/objects
         // implements gzip encoding through compress()
@@ -80,7 +69,7 @@ public class Git {
             System.out.println("Error: No file was found at the given path");
             return;
         }
-        Path save = Paths.get("./git/objects/" + hashFile(filePath));
+        Path save = Paths.get("./git/objects/" + HashFile.hashFile(filePath));
         try {
             Files.write(save, compress(file));
         } catch (IOException e) {
@@ -95,7 +84,7 @@ public class Git {
             System.out.println("Error: Repository has not been initialized");
             return;
         }
-        String hash = hashFile(filePath);
+        String hash = HashFile.hashFile(filePath);
         boolean add = true;
         String[][] index = null;
         try (BufferedReader br = new BufferedReader(Files.newBufferedReader(indexPath))) {
