@@ -9,6 +9,7 @@ import java.util.List;
 public class StageTree {
     HashMap<Path, ArrayList<StageItem>> entriesMap = new HashMap<>();
 
+    
     public StageTree(List<String> entries) {
         entriesMap.put(Path.of("."), new ArrayList<>());
 
