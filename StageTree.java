@@ -38,7 +38,8 @@ public class StageTree {
         entriesMap.get(parent_dir).add(new StageFolder(dir));
     }
 
-    String build_entry(StageFolder dir) throws IOException {
+    // recursively builds the index folder with the staged directories as well.
+    String build_index(StageFolder dir) throws IOException {
         var items = entriesMap.get(dir.path());
 
         var contents = new ArrayList<String>();
@@ -47,7 +48,7 @@ public class StageTree {
                 contents.add(item.toString());
             }
             if (item instanceof StageFolder) {
-                var content = build_entry((StageFolder) item);
+                var content = build_index((StageFolder) item);
                 var hash = HashFile.hashString(content);
                 contents.add("tree " + hash + " " + item.path());
 
