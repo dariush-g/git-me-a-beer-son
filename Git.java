@@ -20,6 +20,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Git {
     public static void main(String[] args) throws IOException {
+        init();
         saveBlob("./Git.java");
         updateIndex("./Git.java");
 
@@ -139,7 +140,7 @@ public class Git {
             System.out.println("Error: No file was found at the given path");
             return null;
         }
-        return compress(file).toString();
+        return file.toString(); //compress(file).toString();
     }
 
     private static byte[] compress(byte[] file) {
