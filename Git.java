@@ -100,10 +100,13 @@ public class Git {
         try (BufferedWriter bw = new BufferedWriter(Files.newBufferedWriter(indexPath))) {
             StringBuilder print = new StringBuilder();
             for (int i = 0; i < index.length; i++) {
-                if (index[i][1].equals(filePath) && !index[i][0].equals(hash)) {
+                if (index[i][1].equals(home.getParent().getFileName() + filePath.substring(1))
+                        && !index[i][0].equals(hash)) {
                     index[i][0] = hash;
                     add = false;
-                } else if (index[i][1].equals(filePath) && index[i][0].equals(hash))
+                } else if (index[i][1]
+                        .equals(home.getParent().getFileName() + filePath.substring(1))
+                        && index[i][0].equals(hash))
                     add = false;
                 print.append("\n" + index[i][0] + " " + index[i][1]);
             }
