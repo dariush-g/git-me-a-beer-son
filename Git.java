@@ -20,12 +20,22 @@ import java.util.zip.GZIPOutputStream;
 
 public class Git {
     public static void main(String[] args) throws IOException {
-        saveBlob("Git.java");
-        updateIndex("Git.java");
+        saveBlob("./Git.java");
+        updateIndex("./Git.java");
 
-        // var entries = Files.readAllLines(Path.of("./git/index"));
-        // var tree = new StageTree(entries);
-        // tree.build_entry(new StageTree.StageFolder(Path.of(".")));
+        saveBlob("./git/head");
+        updateIndex("./git/head");
+
+        saveBlob("./readme.md");
+        updateIndex("./readme.md");
+
+        var entries = Files.readAllLines(Path.of("./git/index"));
+        var tree = new StageTree(entries);
+        var to_write = tree.build_index(new StageTree.StageFolder(Path.of("git-me-a-beer-son")));
+
+        System.out.println();
+
+        Files.write(Path.of("./git/index"), to_write.getBytes());
     }
 
     public static void init() {
