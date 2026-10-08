@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +66,7 @@ public class StageTree {
 
     record StageFile(String hash, Path path) implements StageItem {
         public String toString() {
-            return "blob " + hash + " " + path.toString();
+            return "blob " + hash + " " + path.getFileName();
         }
     }
 
